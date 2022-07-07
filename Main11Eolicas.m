@@ -31,7 +31,7 @@ global OBJF DADOSDMR DTEN DVIO MONLT QGEN NUMGERFIC BARGERFIC DADOSFMINCON CPG B
  dir_atual = cd;   % Carregando diretorio atual do programa
  cd Dados;         % Acessando a pasta de casos
 % Carregando Caso
-IEEE118_v
+IEEE118_v11
 load('Series_Merrick_sep_pu.mat', 'wind');
 load('SAM_WindFarmsOutput_PU.mat');
 cd (dir_atual);   % Retornando ao diretorio do programa
@@ -72,7 +72,7 @@ ResultLinprog = zeros(Nc,NGER+NBAR);
 LambdaLinhas = zeros(Nc,NLIN);
 fluxoGeral = zeros(Nc,NLIN);
 
-PgwGeral = zeros(Nc,3);
+PgwGeral = zeros(Nc,11);
 cargaGeral = zeros(Nc, NBAR);
 
 eolicasEUA = [pout_amazon_wind pout_Atla_VIII pout_block_island pout_Diamond_Vista pout_fenner pout_High_Sheldon ...
@@ -89,8 +89,8 @@ for ic = 1:1:Nc
     QLOAD = QLOAD_b.*rA*variacao;
     
     cargaGeral(ic,:) = PLOAD;
-    PGW = PGWMAX.*wind(ic*dia+hora,:); %Usando dados reais
-% PGW = PGWMAX.*eolicasEUA(ic*dia+hora,:);
+%     PGW = PGWMAX.*wind(ic*dia+hora,:); %Usando dados reais
+    PGW = PGWMAX.*eolicasEUA(ic*dia+hora,:);
 %     PGW = PGWMAX.*[pout_fenner(ic*dia+hora) pout_High_Sheldon(ic*dia+hora) pout_Atla_VIII(ic*dia+hora)];
     PgwGeral(ic,:) = PGW; 
 %     PGW = PGWMAX.*wblrnd(0.8,5,1,3); %Usando a distribuição de Weibull
