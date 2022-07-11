@@ -63,7 +63,7 @@ for i=1:NGER
    CPG(i)   = DGER(i,4); % Custo operacional do gerador
    %%%%%%%%%%% Acrescentar: Déficit e perdas
     if CPG(i) < 400
-        CPG(i) = 1;
+        CPG(i) = 1 + rand();
     else
         NUMEROGERFIC = NUMEROGERFIC+1;
         NUMGERFIC(NUMEROGERFIC) = i;
