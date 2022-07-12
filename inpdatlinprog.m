@@ -16,7 +16,7 @@ global DGER NGER BARPG PGMIN PGMAX CPG
 % constantes gerais
 global PB NITER PAREI DIFMAX TOL
 % PL
-global CX Aeq Beq Aiq Biq Vub Vlb NVAR NCAeq NLAeq NLBeq NUMGERFIC BARGERFIC DVIO
+global CX Aeq Beq Aiq Biq Vub Vlb NVAR NCAeq NLAeq NLBeq NUMGERFIC BARGERFIC DVIO linhasMonitoradas
 
 
 %----------Dados das barras----------
@@ -50,6 +50,7 @@ for i=1:NLIN
 end
 for i=1:max(size(DVIO))
     FLIM(DVIO(i,1)) = DVIO(i,2)/100;
+    linhasMonitoradas(i) = DVIO(i,1);
 end
 
 %----------Dados dos geradores----------

@@ -26,6 +26,8 @@ global PGEN R_LIN R_GER R_BAR FR TO FRref TOref
 % GLOBAL FMINCON
 global OBJF DADOSDMR DTEN DVIO MONLT QGEN NUMGERFIC BARGERFIC DADOSFMINCON CPG Bsh NOGEN
 
+global linhasMonitoradas
+
 
 %% ----------Carregando os Dados----------
  dir_atual = cd;   % Carregando diretorio atual do programa
@@ -287,16 +289,27 @@ end
 sumLambdaLinhas = sum(LambdaLinhas);
 [sumLambdaLinhasOrdenado,numLinhaLambda] = sort(-sumLambdaLinhas);
 sumLambdaLinhasOrdenado = -sumLambdaLinhasOrdenado;
+
 %% Graficos fluxos de linhas selecionadas
-figure
-x1 = linspace(1,Nc,Nc);
-plot(x1,fluxoGeral(:,3), x1,fluxoGeral(:,4), x1,fluxoGeral(:,6), x1,fluxoGeral(:,7));
-legend(["Fluxo Linha 3" "Fluxo Linha 4" "Fluxo Linha 6" "Fluxo Linha 7"])
-title('Fluxo por linha')
-xlabel('Caso')
-ylabel('Fluxo(MW)')
-
-
+cor = ["r" "g" "b" "k" "m"];
+for j=0:6
+    figure
+    legenda(1:size(linhasMonitoradas,2)/5) = "Vazio";
+    x1 = linspace(1,Nc,Nc);
+    for i=1:5
+        plot(x1,fluxoGeral(:,linhasMonitoradas(i+j*5)),'lineWidth',2,'color',cor(i))
+        hold on
+        legenda(2*(i-1)+1) = "Fluxo na Linha: " + linhasMonitoradas(i+j*5);
+        x2 = linspace(FLIM(linhasMonitoradas(i+j*5))*PB,FLIM(linhasMonitoradas(i+j*5))*PB,Nc);
+        plot(x1,x2, cor(i));
+        legenda(2*(i-1)+2) = "Limite da Linha: " + linhasMonitoradas(i+j*5);
+    end
+    legend(legenda)
+    title('Fluxo por linha')
+    xlabel('Caso')
+    ylabel('Fluxo(MW)')
+    clear legenda
+end
 %% Geradores convencionais 
 somaGeracao = sum(ResultLinprog(1:end,1:NGER),2);
 tempo = linspace(1,Nc,Nc);
