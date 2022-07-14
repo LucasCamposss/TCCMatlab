@@ -49,8 +49,8 @@ clear DGER;
 clear DLIN;
 clear DTEN;
 %% Declaração de variaveis  
-Nc = 30; %Numero de casos a serem rodados, usar um valor alto Nc=2000;
-dia = 1; %Dia do ano no arquivo de dados
+Nc = 1000; %Numero de casos a serem rodados, usar um valor alto Nc=2000;
+dia = 0; %Dia do ano no arquivo de dados
 hora = 18; %Hora do dia, para pegar apenas carga pesada
 ictg = 1;
 
@@ -90,7 +90,7 @@ for ic = 1:1:Nc
     QLOAD = QLOAD_b.*rA*variacao;
     
     cargaGeral(ic,:) = PLOAD;
-    PGW = PGWMAX.*wind(ic*dia+hora,:); %Usando dados reais
+    PGW = PGWMAX.*wind(24*dia+hora,:); %Usando dados reais
 % PGW = PGWMAX.*eolicasEUA(ic*dia+hora,:);
 %     PGW = PGWMAX.*[pout_fenner(ic*dia+hora) pout_High_Sheldon(ic*dia+hora) pout_Atla_VIII(ic*dia+hora)];
     PgwGeral(ic,:) = PGW; 
@@ -289,16 +289,18 @@ sumLambdaLinhas = sum(LambdaLinhas);
 [sumLambdaLinhasOrdenado,numLinhaLambda] = sort(-sumLambdaLinhas);
 sumLambdaLinhasOrdenado = -sumLambdaLinhasOrdenado;
 %% Graficos fluxos de linhas selecionadas
+de = 100;
+ate = 200;
 cor = ["r" "g" "b" "k" "m"];
 for j=0:6
     figure
     legenda(1:size(linhasMonitoradas,2)/5) = "Vazio";
-    x1 = linspace(1,Nc,Nc);
+    x1 = linspace(de,ate,ate-de +1);
     for i=1:5
-        plot(x1,fluxoGeral(:,linhasMonitoradas(i+j*5)),'lineWidth',2,'color',cor(i))
+        plot(x1,fluxoGeral(de:ate,linhasMonitoradas(i+j*5)),'lineWidth',2,'color',cor(i))
         hold on
         legenda(2*(i-1)+1) = "Fluxo na Linha: " + linhasMonitoradas(i+j*5);
-        x2 = linspace(FLIM(linhasMonitoradas(i+j*5))*PB,FLIM(linhasMonitoradas(i+j*5))*PB,Nc);
+        x2 = linspace(FLIM(linhasMonitoradas(i+j*5))*PB,FLIM(linhasMonitoradas(i+j*5))*PB,ate-de+1);
         plot(x1,x2, cor(i));
         legenda(2*(i-1)+2) = "Limite da Linha: " + linhasMonitoradas(i+j*5);
     end
@@ -310,16 +312,19 @@ for j=0:6
 end
 %% Geradores convencionais 
 somaGeracao = sum(ResultLinprog(1:end,1:NGER),2);
-tempo = linspace(1,Nc,Nc);
-legenda(1:NGER) = "Vazio";
+tempo = linspace(de,ate,ate-de+1);
 figure
+j=0;
 for i=1:NGER
-    plot(tempo,PB*ResultLinprog(:,i))
-    legenda(i) = "Gerador Barra: " + NOGEN(i);
-    if any(i==NUMGERFIC())
-        legenda(i) = "Gerador Fictício " + NOGEN(i);
+    if PB*max(ResultLinprog(:,i))>1
+        j = j+1;
+        plot(tempo,PB*ResultLinprog(de:ate,i))
+        legenda(j) = "Gerador Barra: " + NOGEN(i);
+        if any(i==NUMGERFIC())
+            legenda(j) = "Gerador Fictício " + NOGEN(i);
+        end
+        hold on
     end
-    hold on
 end
 hold off
 % plot(linspace(1,Nc,Nc),PB*ResultLinprog(:,1),linspace(1,Nc,Nc),PB*ResultLinprog(:,2),linspace(1,Nc,Nc),...
@@ -328,7 +333,7 @@ hold off
 % 
 legend(legenda)
 title('Geradores convencionais')
-xlabel('hora')
+xlabel('Caso')
 ylabel('Geração(MW)')
 clear legenda
 %% Geração eolica
@@ -336,48 +341,25 @@ somaEolicas = sum(PgwGeral(),2);
 figure
 legenda(1:size(PgwGeral,2)+1)="Vazio";
 for i=1:size(PgwGeral,2)
-plot(tempo,PB*PgwGeral(:,i))
+plot(tempo,PB*PgwGeral(de:ate,i))
 legenda(i) = "Eólica " + i;
 hold on
 end
 legenda(i+1) = "Geração Eólica Total";
-plot(tempo,PB*somaEolicas)
+plot(tempo,PB*somaEolicas(de:ate))
 legend(legenda)
 title('Geradores Eólicos')
-xlabel('hora')
+xlabel('Caso')
 ylabel('Geração(MW)')
 hold off 
 %% Grafico de carga
 figure
-plot(linspace(1,Nc,Nc),PB*sum(cargaGeral,2))
+vetorCarga = PB*sum(cargaGeral,2);
+plot(linspace(de,ate,ate-de+1),vetorCarga(de:ate))
 title('Carga do Sistema')
-xlabel('hora')
+xlabel('Caso')
 ylabel('Carga(MW)')
 
 ssss=1;
-%% teste de dados de eolicas
-% figure
-% yteste = linspace(1,100,100);
-% % plot(yteste,pout_amazon_wind(1:100),yteste,pout_Atla_VIII(1:100),yteste,pout_block_island(1:100),...
-% %      yteste,pout_Diamond_Vista(1:100),yteste,pout_fenner(1:100),yteste,pout_High_Sheldon(1:100),...
-% %      yteste,pout_madison(1:100),yteste,pout_maple(1:100),yteste,pout_Timber_road(1:100),...
-% %      yteste,pout_Top_Crop(1:100),yteste,pout_waymart(1:100))
-% %  legend(["pout_amazon_wind" "pout_Atla_VIII" "pout_block_island" "pout_Diamond_Vista" "pout_fenner" "pout_High_Sheldon" ...
-% %      "pout_madison" "pout_maple" "pout_Timber_road" "pout_Top_Crop" "pout_waymart"])
-% 
-% plot(yteste,pout_amazon_wind(1:100),yteste,pout_Atla_VIII(1:100),yteste,pout_block_island(1:100),...
-%      yteste,pout_Diamond_Vista(1:100),yteste,pout_fenner(1:100),yteste,pout_High_Sheldon(1:100))
-%  legend(["pout_amazon_wind" "pout_Atla_VIII" "pout_block_island" "pout_Diamond_Vista" "pout_fenner" "pout_High_Sheldon" ...
-%      ])
-% 
-% tempo = 500;
-%  yteste = linspace(1,tempo,tempo);
-% 
-% 
-% somaEolicas = pout_amazon_wind + pout_Atla_VIII + pout_block_island + pout_Diamond_Vista + pout_fenner +...
-%                pout_High_Sheldon + pout_madison + pout_maple + pout_Timber_road + pout_Top_Crop + pout_waymart;
-% 
-% somaWind = sum(wind,2);       
-% somaTotalWind = somaWind + somaEolicas;
-fluxoFluxo = max(fluxoGeral);
-% plot(yteste,somaEolicas(1:tempo),yteste, somaWind(1:tempo),yteste,somaTotalWind(1:tempo))
+
+
