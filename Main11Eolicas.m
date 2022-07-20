@@ -26,7 +26,7 @@ global PGEN R_LIN R_GER R_BAR FR TO FRref TOref
 % GLOBAL FMINCON
 global OBJF DADOSDMR DTEN DVIO MONLT QGEN NUMGERFIC BARGERFIC DADOSFMINCON CPG Bsh NOGEN
 
-global linhasMonitoradas
+global linhasMonitoradas numCorteVento barCorteVento
 
 
 %% ----------Carregando os Dados----------
@@ -50,7 +50,7 @@ clear DGER;
 clear DLIN;
 clear DTEN;
 %% Declaração de variaveis  
-Nc = 1000; %Numero de casos a serem rodados, usar um valor alto Nc=2000;
+Nc = 50; %Numero de casos a serem rodados, usar um valor alto Nc=2000;
 dia = 0; %Dia do ano no arquivo de dados
 hora = 18; %Hora do dia, para pegar apenas carga pesada
 ictg = 1;
@@ -100,6 +100,10 @@ for ic = 1:1:Nc
     if hora>20
         hora = 18;
         dia = dia + 1;
+    end
+    % mudar o valor de geração do corte de vento
+    for i=1:size(numCorteVento,2)
+      PGMIN(numCorteVento(i)) = - PGW(i);
     end
     
     for i= 1:NGW
@@ -291,8 +295,8 @@ sumLambdaLinhas = sum(LambdaLinhas);
 sumLambdaLinhasOrdenado = -sumLambdaLinhasOrdenado;
 
 %% Graficos fluxos de linhas selecionadas
-de = 100;
-ate = 200;
+de = 1;
+ate = 50;
 cor = ["r" "g" "b" "k" "m"];
 for j=0:6
     figure
@@ -362,6 +366,18 @@ title('Carga do Sistema')
 xlabel('Caso')
 ylabel('Carga(MW)')
 
+%% corte de vento
+figure
+for i=1:size(numCorteVento,2)
+    plot(tempo,-PB*ResultLinprog(de:ate,numCorteVento(i)))
+    hold on
+    legenda(i) = "Corte de Vento na Barra: " + barCorteVento(i);
+end
+legend(legenda)
+title('Corte de Vento')
+xlabel('Caso')
+ylabel('Corte(MW)')
+hold off
 ssss=1;
 
 

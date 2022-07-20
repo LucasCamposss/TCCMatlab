@@ -18,6 +18,8 @@ global PB NITER PAREI DIFMAX TOL
 % PL
 global CX Aeq Beq Aiq Biq Vub Vlb NVAR NCAeq NLAeq NLBeq NUMGERFIC BARGERFIC DVIO linhasMonitoradas
 
+global numCorteVento barCorteVento
+
 
 %----------Dados das barras----------
 
@@ -57,14 +59,19 @@ end
 
 [NGER,AUX]=size(DGER);
 NUMEROGERFIC = 0;
+numCorte = 0;
 for i=1:NGER
    BARPG(i) = DGER(i,1); % Apontador barra/gerador. BARPG(2)=4 significa BAR do GER 2 é 4
    PGMIN(i) = DGER(i,2)/PB;
    PGMAX(i) = DGER(i,3)/PB;
    CPG(i)   = DGER(i,4); % Custo operacional do gerador
    %%%%%%%%%%% Acrescentar: Déficit e perdas
-    if CPG(i) < 400
+    if CPG(i) < 400 && CPG(i) > 0
         CPG(i) = 1 + rand();
+    elseif CPG(i) < 0
+        numCorte = numCorte+1;
+        numCorteVento(numCorte) = i;
+        barCorteVento(numCorte) = BARPG(i);
     else
         NUMEROGERFIC = NUMEROGERFIC+1;
         NUMGERFIC(NUMEROGERFIC) = i;

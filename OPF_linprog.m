@@ -33,7 +33,7 @@ for i=1:NGER;
     AX(bar,i) = 1;  % Representa os geradores
     CX(i)     = CPG(i); %custo de geração (US$/MWh)
     Vub(i)    = PGMAX(i);
-    Vlb(i)    = 0;       % Referente a minima geraçao
+    Vlb(i)    = PGMIN(i);       % Referente a minima geraçao
 end
 %-----------Contribuiçao da Rede em AX, Vub e Vlb-------------
 Bbus = zeros(NBAR,NBAR);
