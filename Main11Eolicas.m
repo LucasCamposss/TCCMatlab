@@ -33,7 +33,8 @@ global linhasMonitoradas numCorteVento barCorteVento
  dir_atual = cd;   % Carregando diretorio atual do programa
  cd Dados;         % Acessando a pasta de casos
 % Carregando Caso
-IEEE118_v11
+% IEEE118_v11
+IEEE118_v11M
 load('Series_Merrick_sep_pu.mat', 'wind');
 load('SAM_WindFarmsOutput_PU.mat');
 cd (dir_atual);   % Retornando ao diretorio do programa
@@ -50,7 +51,7 @@ clear DGER;
 clear DLIN;
 clear DTEN;
 %% Declaração de variaveis  
-Nc = 50; %Numero de casos a serem rodados, usar um valor alto Nc=2000;
+Nc = 1000; %Numero de casos a serem rodados, usar um valor alto Nc=2000;
 dia = 0; %Dia do ano no arquivo de dados
 hora = 18; %Hora do dia, para pegar apenas carga pesada
 ictg = 1;
@@ -295,8 +296,8 @@ sumLambdaLinhas = sum(LambdaLinhas);
 sumLambdaLinhasOrdenado = -sumLambdaLinhasOrdenado;
 
 %% Graficos fluxos de linhas selecionadas
-de = 1;
-ate = 50;
+de = 100;
+ate = 200;
 cor = ["r" "g" "b" "k" "m"];
 for j=0:6
     figure

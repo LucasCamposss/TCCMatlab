@@ -50,7 +50,7 @@ clear DGER;
 clear DLIN;
 clear DTEN;
 %% Declaração de variaveis  
-Nc = 50; %Numero de casos a serem rodados, usar um valor alto Nc=2000;
+Nc = 1000; %Numero de casos a serem rodados, usar um valor alto Nc=2000;
 dia = 0; %Dia do ano no arquivo de dados
 hora = 18; %Hora do dia, para pegar apenas carga pesada
 ictg = 1;
@@ -295,8 +295,8 @@ sumLambdaLinhas = sum(LambdaLinhas);
 sumLambdaLinhasOrdenado = -sumLambdaLinhasOrdenado;
 
 %% Graficos fluxos de linhas selecionadas
-de = 1;
-ate = 50;
+de = 100;
+ate = 200;
 cor = ["r" "g" "b" "k" "m"];
 for j=0:6
     figure
